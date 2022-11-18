@@ -34,8 +34,9 @@ def main():
                 data.to_sql('on_street_dynamic', con=engine, if_exists='append', index=False)
             # except ValueError as err:
             #     logging.error(f'>> {err}, {type(err)}')
-            except:
-                logging.error(f'>> already exist')
+            except Exception as err:
+                # logging.error(f'>> already exist')
+                logging.error(err)
             else:
                 logging.info(f'>> import complete')
 
