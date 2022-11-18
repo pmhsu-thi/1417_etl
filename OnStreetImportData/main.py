@@ -7,7 +7,7 @@ from sql_conn import PostgreSQL
 class GetData:
     def read_txt(self, file):
         data = []
-        with open(file) as txtfile:
+        with open(file, encoding='latin-1') as txtfile:
             for row in txtfile.readlines():
                 row = row[:-1].split(',')
                 if len(row) == 1:
