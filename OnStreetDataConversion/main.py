@@ -8,7 +8,7 @@ from args import date_type, start, end
 def main():
     logging.basicConfig(level=logging.INFO)
     # 確定資料處理日期範圍
-    start_date, end_date = get_date_period(start, end, date_type)
+    start_date, end_date = get_date_period(start, end)
     # 處理計算為 分時 及 分日 停車資料，分時資料是資料庫表名(車格停車類型)做為 key 的 dict
     dp = DataProcess(start_date, end_date)
     hourly_data, daily_data = dp.main_data_process()

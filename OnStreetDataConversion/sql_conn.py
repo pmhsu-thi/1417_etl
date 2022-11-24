@@ -1,6 +1,7 @@
 import psycopg2
 import logging
 from psycopg2 import sql
+from datetime import timedelta
 
 from args import HOURLY_TABLES, HOURLY_DATA_COLUMNS, DAILY_DATA_COLUMNS
 
@@ -33,6 +34,32 @@ class ConnSQL:
         finally:
             conn.close()
         return result
+
+@ConnSQL
+def __get_data_date(*args, conn, **kwargs):
+    res = {}
+    with conn.cursor() as cur:
+        query = sql.SQL("SELECT {col} FROM {table};").format(
+            col=sql.SQL('max(infodate)'),
+            table=sql.SQL('on_street_dynamic_days')
+        )
+        cur.execute(query)
+        res['start'] = cur.fetchall()
+
+    with conn.cursor() as cur:
+        query = sql.SQL("SELECT {col} FROM {table};").format(
+            col=sql.SQL('max(infodate)'),
+            table=sql.SQL('on_street_dynamic')
+        )
+        cur.execute(query)
+        res['end'] = cur.fetchall()
+    return res
+
+def get_data_date_range() -> str:
+    res = __get_data_date()
+    start = res['start'][0][0] + timedelta(days=1)
+    end = res['end'][0][0] + timedelta(days=1)
+    return start, end
 
 @ConnSQL
 def __get_data_tmp(*args, conn, **kwargs):

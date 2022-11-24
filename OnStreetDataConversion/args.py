@@ -1,5 +1,5 @@
-# date_type 默認為前一天資料, 如需自訂處理日期則使用 date_type = 'DateRange'
-date_type = 'DateRange'
+# date_type 默認為自動查找可處理範圍, 如需自訂處理日期則使用 date_type = 'DateRange'
+date_type = 'Auto'
 
 # 自訂處理日期開始結束時間
 start = '2022-09-07'

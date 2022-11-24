@@ -1,19 +1,25 @@
 import logging
 import pandas as pd
-from datetime import time, date, datetime, timedelta
+from datetime import time, date, datetime
 
+from sql_conn import get_data_date_range
 from args import NAME_TYPES_CONVERSION, HOURLY_TABLES, NAME_TYPE_TO_TABLE
 
+def stop():
+    import sys
+    sys.exit()
+
 # 獲取資料處理開始結束日期
-def get_date_period(*arg):
-    start_date = date.today() - timedelta(days=1)
-    end_date = date.today()
-    if arg[2] == 'DateRange':
+def get_date_period(start, end, period_type):
+    if period_type == 'DateRange':
         try:
-            start_date = datetime.strptime(arg[0], "%Y-%m-%d").date()
-            end_date = datetime.strptime(arg[1], "%Y-%m-%d").date()
+            start_date = datetime.strptime(start, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end, "%Y-%m-%d").date()
         except:
             logging.error('Date format is wrong')
+            stop()
+    else:
+        start_date, end_date = get_data_date_range()
 
     logging.info(f"Data range from {start_date} to {end_date}")
     return start_date, end_date
