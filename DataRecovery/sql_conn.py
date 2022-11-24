@@ -76,7 +76,7 @@ def __insert_data(*args, conn, **kwargs):
             cur.execute(query, tuple(row))
 
 def insert_off_street_data(data):
-    logging.info('|----- Insert OffStreet Data -----|')
+    logging.info('|----- Insert Off_Street Data -----|')
     primary_key = 'id infotime'.split(' ')
     columns = 'id availablecar infotime'.split(' ')
     __insert_data(
