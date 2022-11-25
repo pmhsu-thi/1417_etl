@@ -1,11 +1,17 @@
 import csv
 import logging
-from sql_conn import get_off_street_data, insert_off_street_data
+from sql_conn import get_off_street_data, get_off_street_hours_data, insert_off_street_data, insert_off_street_hours_data
+
+def stop():
+    import sys
+    sys.exit()
 
 def process_type():
+    print('Enter Data Type (realtime or hourly)')
+    table = input('>> ')
     print('Choose Input or Output Data (input or output)')
-    res = input('>> ')
-    return res
+    mode = input('>> ')
+    return table, mode
 
 def get_date():
     print('Enter Data Recovery Scope (YYYY-mm-dd)')
@@ -25,24 +31,45 @@ def read_csv():
 
 def write_csv(data):
     logging.info('|----- Write CSV -----|')
-    with open('off_street_dynamic.csv', 'w', newline='') as csvfile:
+    with open('off_street_data.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(data)
 
+def get_data(start, end, table):
+    if table == 'realtime':
+        res = get_off_street_data(start, end)
+        return res
+    if table == 'hourly':
+        res = get_off_street_hours_data(start, end)
+        return res
+    logging.error(f'>> data_type: {table},  Data Type Error!!')
+    stop()
+
+def insert_data(data, table):
+    if table == 'realtime':
+        insert_off_street_data(data)
+        return
+    if table == 'hourly':
+        insert_off_street_hours_data(data)
+        return
+    logging.error(f'>> data_type: {table},  Data Type Error!!')
+    stop()
+
 def main():
-    mode = process_type()
+    table, mode = process_type()
     if mode == 'input':
         data = read_csv()
-        insert_off_street_data(data)
-
-    elif mode == 'output':
+        insert_data(data, table)
+        return
+    if mode == 'output':
         start, end = get_date()
-        data = get_off_street_data(start, end)
+        data = get_data(start, end, table)
         write_csv(data)
         logging.info('>> Output Completed !!')
+        return
 
-    else:
-        logging.error(f'mode: {mode}, Mode error (only input, output)')
+    logging.error(f'mode: {mode}, Mode error (only input, output)')
+
 
 
 if __name__ == '__main__':
