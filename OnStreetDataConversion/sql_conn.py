@@ -55,7 +55,7 @@ def __get_data_date(*args, conn, **kwargs):
         res['end'] = cur.fetchall()
     return res
 
-def get_data_date_range() -> str:
+def get_data_date_range():
     res = __get_data_date()
     start = res['start'][0][0] + timedelta(days=1)
     end = res['end'][0][0] + timedelta(days=1)
