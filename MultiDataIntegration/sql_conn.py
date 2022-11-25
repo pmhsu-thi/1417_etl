@@ -173,7 +173,7 @@ def get_data_date_range() -> str:
     res = __get_data_date()
     start = res['start'][0][0].date() + timedelta(days=1)
     end = res['end'][0][0].date() + timedelta(days=1)
-    return start, end
+    return start.strftime('%Y-%m-%d'), end.strftime('%Y-%m-%d')
 
 def define_period(period_type):
     logging.info(f'>> Period Type : {period_type}')
