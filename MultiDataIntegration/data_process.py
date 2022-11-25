@@ -6,7 +6,7 @@ def stop():
     sys.exit()
 
 class DataProcess(PreProcess):
-    def __init__(self, period_type):
+    def __init__(self, period_type='default'):
         super().__init__(period_type)
         self.result = {
             'total_supply' : {},
