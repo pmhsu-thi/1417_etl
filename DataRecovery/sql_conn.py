@@ -107,3 +107,37 @@ def insert_off_street_hours_data(data):
         cols=columns,
         pkey=primary_key
     )
+
+@ConnTHISQL
+def get_multi_data(*args, conn, **kwargs):
+    logging.info('|----- Get Multi Data From THI DataBase -----|')
+    res = {}
+    with conn.cursor() as cur:
+        query = sql.SQL("SELECT * FROM multi_total_supply;")
+        cur.execute(query)
+        res['supply'] = cur.fetchall()
+        query = sql.SQL("SELECT * FROM multi_total_totalcar;")
+        cur.execute(query)
+        res['totalcar'] = cur.fetchall()
+        query = sql.SQL("SELECT * FROM multi_total_usage;")
+        cur.execute(query)
+        res['usage'] = cur.fetchall()
+    return res
+
+TABLE_COLUMNS = [
+    'infotime', 'district', 'car_type', 'hr_0', 'hr_1', 'hr_2', 'hr_3', 'hr_4', 'hr_5',
+    'hr_6', 'hr_7', 'hr_8', 'hr_9', 'hr_10', 'hr_11', 'hr_12', 'hr_13', 'hr_14', 'hr_15',
+    'hr_16', 'hr_17', 'hr_18', 'hr_19', 'hr_20', 'hr_21', 'hr_22', 'hr_23'
+]
+
+def insert_multi_data(data):
+    for table in data:
+        logging.info(f'|----- Insert multi total {table} Data -----|')
+        table_name = f'multi_total_{table}'
+
+        __insert_data(
+            data[table],
+            table=table_name,
+            cols=TABLE_COLUMNS,
+            pkey=['infotime', 'district', 'car_type']
+        )
