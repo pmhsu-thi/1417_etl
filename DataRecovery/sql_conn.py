@@ -52,10 +52,21 @@ class Conn1417SQL:
 
 @ConnTHISQL
 def get_off_street_data(*args, conn, **kwargs):
-    logging.info('|----- Get Data From THI DataBase -----|')
+    logging.info('|----- Get RealTime OffStreet Data From THI DataBase -----|')
     with conn.cursor() as cur:
         query = sql.SQL("SELECT * FROM {table} WHERE infotime BETWEEN %s AND %s;").format(
             table=sql.SQL('off_street_dynamic')
+        )
+        cur.execute(query, [args[0], args[1]])
+        res = cur.fetchall()
+    return res
+
+@ConnTHISQL
+def get_off_street_hours_data(*args, conn, **kwargs):
+    logging.info('|----- Get Hourly OffStreet Data From THI DataBase -----|')
+    with conn.cursor() as cur:
+        query = sql.SQL("SELECT * FROM {table} WHERE infotime BETWEEN %s AND %s;").format(
+            table=sql.SQL('off_street_dynamic_hours')
         )
         cur.execute(query, [args[0], args[1]])
         res = cur.fetchall()
@@ -76,12 +87,23 @@ def __insert_data(*args, conn, **kwargs):
             cur.execute(query, tuple(row))
 
 def insert_off_street_data(data):
-    logging.info('|----- Insert Off_Street Data -----|')
+    logging.info('|----- Insert RealTime OffStreet Data -----|')
     primary_key = 'id infotime'.split(' ')
     columns = 'id availablecar infotime'.split(' ')
     __insert_data(
         data,
         table='off_street_dynamic',
+        cols=columns,
+        pkey=primary_key
+    )
+
+def insert_off_street_hours_data(data):
+    logging.info('|----- Insert Hourly OffStreet Data -----|')
+    primary_key = 'id infotime'.split(' ')
+    columns = 'id infotime type totalstay usage totalcar supply'.split(' ')
+    __insert_data(
+        data,
+        table='off_street_dynamic_hours',
         cols=columns,
         pkey=primary_key
     )

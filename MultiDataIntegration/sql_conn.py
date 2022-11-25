@@ -149,19 +149,42 @@ def __fetch_data(*args, conn, **kwargs):
         
     return result
 
+@ConnSQL
+def __get_data_date(*args, conn, **kwargs):
+    res = {}
+    with conn.cursor() as cur:
+        query = sql.SQL("SELECT {col} FROM {table};").format(
+            col=sql.SQL('max(infotime)'),
+            table=sql.SQL('multi_total_usage')
+        )
+        cur.execute(query)
+        res['start'] = cur.fetchall()
+
+    with conn.cursor() as cur:
+        query = sql.SQL("SELECT {col} FROM {table};").format(
+            col=sql.SQL('max(infotime)'),
+            table=sql.SQL('on_street_dynamic_hour_special_vehicle')
+        )
+        cur.execute(query)
+        res['end'] = cur.fetchall()
+    return res
+
+def get_data_date_range() -> str:
+    res = __get_data_date()
+    start = res['start'][0][0].date() + timedelta(days=1)
+    end = res['end'][0][0].date() + timedelta(days=1)
+    return start, end
+
 def define_period(period_type):
     logging.info(f'>> Period Type : {period_type}')
-    if period_type == 'default':
-        today = datetime.now().date()
-        yesterday = today - timedelta(days=1)
-        return yesterday.strftime("%Y-%m-%d"), today.strftime("%Y-%m-%d")
     if period_type == 'args':
         return SQL_ARGS['start'], SQL_ARGS['end']
+    return get_data_date_range()  
 
 def get_data(period_type):
     start_date, end_date = define_period(period_type)
-    result = __fetch_data(start=start_date, end=end_date)
-    return result
+    res = __fetch_data(start=start_date, end=end_date)
+    return res
 
 @ConnSQL
 def __truncate_test_table(*args, conn, **kwargs):

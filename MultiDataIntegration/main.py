@@ -31,8 +31,8 @@ totalcar:
 '''
 
 def main():
-    # DataProcess('args') 使用 args.py 中參數決定處理時間，如不指定參數則處理前一天資料
-    dp = DataProcess('args')
+    # DataProcess('args') 使用 args.py 中參數決定處理時間，如不指定參數則自動查詢處理時間範圍
+    dp = DataProcess()
     dp.set_date()
     dp.data_integration()
     result = dp.calc_result()
