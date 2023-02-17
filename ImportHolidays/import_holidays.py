@@ -52,7 +52,7 @@ def insert_holidays(data):
     )
 
 def read_csv():
-    with open("/home/thi/holidays.csv", "r", newline="") as csvfile:
+    with open("/home/thi/1417_etl/ImportHolidays/holidays.csv", "r", newline="") as csvfile:
         reader = csv.reader(csvfile)
         res = []
         for row in reader:
