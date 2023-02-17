@@ -95,15 +95,9 @@ class DataTransformerHourly(RawDataProcess, GridState):
                 # Ignore timestamp which not in charging period
                 if timestamp.time() not in self.road_charging[grid[:3]][weekday_type]:
                     continue
-                
-                try:
-                    _ = grid_dict[grid][grid_index][0]
-                except:
-                    print(f"grid: {grid}")
-                    print(f"grid_index: {grid_index}")
-                    print(grid_dict[grid])
-                    import sys
-                    sys.exit()
+                if grid_dict[grid] == []:
+                    logging.critical(f">> Grid {grid} not have legitimate bill!!")
+                    del grid_dict[grid]
 
                 # All events have been recorded
                 if grid_index_stop:
