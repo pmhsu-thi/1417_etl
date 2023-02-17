@@ -95,6 +95,15 @@ class DataTransformerHourly(RawDataProcess, GridState):
                 if timestamp.time() not in self.road_charging[grid[:3]][weekday_type]:
                     continue
                 
+                try:
+                    _ = grid_dict[grid][grid_index][0]
+                except:
+                    print(f"grid: {grid}")
+                    print(f"grid_index: {grid_index}")
+                    print(grid_dict[grid])
+                    import sys
+                    sys.exit()
+
                 # All events have been recorded
                 if grid_index_stop:
                     sorted_dict[grid].append([timestamp, -1])
