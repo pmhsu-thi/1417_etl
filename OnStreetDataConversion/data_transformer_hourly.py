@@ -82,8 +82,8 @@ class DataTransformerHourly(RawDataProcess, GridState):
             self.road_charging, charging_period, self.grid_static, self.grid_types, self.grid_name_types
         )
     
-    # 在 dict 資料中插入時間戳
-    # 時間戳用處是後續轉換分時資料時，作為記錄該時段狀態的觸發點
+    # Insert timestamp to the grid dictionary data
+    # When read the timestamp, record status of the grid
     def insert_timestamp(self, grid_dict, sorted_dict):
         for grid in grid_dict:
             grid_index = 0
