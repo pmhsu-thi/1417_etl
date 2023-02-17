@@ -119,6 +119,15 @@ def __get_data_tmp(*args, conn, **kwargs):
         cur.execute(query, [args[0].strftime("%Y-%m-%d"), args[1].strftime("%Y-%m-%d")])
         result['Holiday'] = cur.fetchall()
 
+    with conn.cursor() as cur:
+        query = sql.SQL("SELECT {col} FROM {table} WHERE is_weekend = 1 AND is_workday = 1 AND date_col BETWEEN %s AND %s;").format(
+            col=sql.SQL('date_col'),
+            table=sql.SQL('public.holidays')
+        )
+        logging.debug(query.as_string(conn))
+        cur.execute(query, [args[0].strftime("%Y-%m-%d"), args[1].strftime("%Y-%m-%d")])
+        result['Workday'] = cur.fetchall()
+
     return result
 
 # get_data(data_type, start_date, end_date)
@@ -131,7 +140,8 @@ def get_data(*args):
     charge_period = tmp['ChargePeriod']
     charge_type = tmp['ChargeType']
     holidays = tmp['Holiday']
-    return raw_data, grid_static, road_static, charge_period, charge_type, holidays
+    workdays = tmp['Workday']
+    return raw_data, grid_static, road_static, charge_period, charge_type, holidays, workdays
 
 
 @ConnSQL

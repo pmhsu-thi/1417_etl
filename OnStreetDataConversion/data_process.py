@@ -27,7 +27,7 @@ class DataProcess(DataTransformerDaily, DataTransformerHourly):
     # 總處理流程
     def main_data_process(self, return_except=False):
         # 從資料庫抓取資料
-        self.raw_data, grid_static, road_static, charge_period, charge_type, holidays = get_data(self.start_date, self.end_date)
+        self.raw_data, grid_static, road_static, charge_period, charge_type, holidays, workdays = get_data(self.start_date, self.end_date)
         
         # 車格收費 及 停車類型 對照表處理、車格 及 路段 靜態資料表處理、國定假日正向列表
         self.charge_dict = charge_to_dict(charge_period)
@@ -36,6 +36,7 @@ class DataProcess(DataTransformerDaily, DataTransformerHourly):
         self.grid_static = list(map(lambda x: x[0], grid_static))
         self.road_static = list(map(lambda x: x[0], road_static))
         self.holidays = list(map(lambda x: datetime.strptime(x[0], '%Y-%m-%d').date(), holidays))
+        self.workdays = list(map(lambda x: datetime.strptime(x[0], '%Y-%m-%d').date(), workdays))
 
         # 分日及分時資料處理
         logging.info('|----- Start Data Processing -----|')

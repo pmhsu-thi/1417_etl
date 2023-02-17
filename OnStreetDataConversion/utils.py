@@ -215,11 +215,12 @@ def get_time_range(origin_time, target_time):
     return sta_time_list
 
 # 判斷收費日期
-def get_week_no(date, holidays):
+def get_week_no(date, holidays, workdays):
     if date in holidays:
         return 7
-    else:
-        return date.weekday()
+    if date in workdays:
+        return 0
+    return date.weekday()
 
 # 限制開單時間於收費時段中
 def pan_time(*args, **kwargs):

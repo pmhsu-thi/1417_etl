@@ -16,8 +16,9 @@ class RawDataProcess:
         row[2]: 車輛離開時間
         '''
         grid_type = self.grid_types[row[0]]
-        benchmark_start = self.charge_dict[grid_type][get_week_no(row[1].date(), self.holidays)]['period'][0][0]
-        benchmark_end = self.charge_dict[grid_type][get_week_no(row[1].date(), self.holidays)]['period'][-1][-1]
+        benchmark_start = self.charge_dict[grid_type][get_week_no(row[1].date(), self.holidays, self.workdays)]['period'][0][0]
+        benchmark_end = self.charge_dict[grid_type][get_week_no(row[1].date(), self.holidays, self.workdays)]['period'][-1][-1]
+
         start_time, end_time = pan_time(
             grid=row[0], start=row[1], end=row[2], time_start=benchmark_start, time_end=benchmark_end
         )
@@ -90,7 +91,7 @@ class DataTransformerHourly(RawDataProcess, GridState):
             grid_index_stop = 0
             sorted_dict[grid] = []
             for timestamp in self.time_arr:
-                weekday_type = get_week_no(timestamp.date(), self.holidays)
+                weekday_type = get_week_no(timestamp.date(), self.holidays, self.workdays)
                 # Ignore timestamp which not in charging period
                 if timestamp.time() not in self.road_charging[grid[:3]][weekday_type]:
                     continue
@@ -142,7 +143,7 @@ class DataTransformerHourly(RawDataProcess, GridState):
             for row in sorted_dict[grid]:
                 # 日期變更，重新確認收費時段
                 if row[0].date() != last_event[0].date():
-                    charging_end = self.road_charging[grid[:3]][get_week_no(row[0].date(), self.holidays)][-1]
+                    charging_end = self.road_charging[grid[:3]][get_week_no(row[0].date(), self.holidays, self.workdays)][-1]
                     gs.state['reset'] = 1
                     last_event = row
 
@@ -180,7 +181,7 @@ class DataTransformerHourly(RawDataProcess, GridState):
         column_number = len(HOURLY_DATA_COLUMNS) - 2
         self.park_road[name_type_table][road] = {}
         for timestamp in self.time_arr:
-            if timestamp.time() in self.road_charging[road][get_week_no(timestamp.date(), self.holidays)][1:]:
+            if timestamp.time() in self.road_charging[road][get_week_no(timestamp.date(), self.holidays, self.workdays)][1:]:
                 self.park_road[name_type_table][road][timestamp] = [0 for _ in range(column_number)]
 
     # 格位分時資料 >> 路段分時資料
@@ -220,7 +221,7 @@ class DataTransformerHourly(RawDataProcess, GridState):
                 for timestamp in self.park_road[table][road]:
                     obj = self.park_road[table][road][timestamp]
                     try:
-                        week_no = get_week_no(timestamp.date(), self.holidays)
+                        week_no = get_week_no(timestamp.date(), self.holidays, self.workdays)
                         cnt = self.road_cnt[table][road][week_no][timestamp.time()]
                     except ValueError as err:
                         logging.critical(

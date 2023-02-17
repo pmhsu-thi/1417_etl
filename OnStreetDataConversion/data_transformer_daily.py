@@ -21,7 +21,7 @@ class DataTransformerDaily:
             if name_type is None:
                 continue
             # 組成唯一鍵 (路段ID # 開單日期 # name_type)
-            week_no = get_week_no(row[1].date(), self.holidays)
+            week_no = get_week_no(row[1].date(), self.holidays, self.workdays)
             self.debug_check_cnt(road, week_no, name_type, row[1].date())
             if self.skip is True:
                 continue
