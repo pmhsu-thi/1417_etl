@@ -37,9 +37,9 @@ class RawDataProcess:
         # 將原始資料分類至不同 name_type 的車格中
         for row in self.raw_data:
             grid = row[0]
-            if grid not in self.grid_name_types.keys():
+            if grid not in self.grid_name_types:
                 continue
-            if grid not in self.grid_dict.keys():
+            if grid not in self.grid_dict:
                 self.grid_dict[grid] = []
 
             start_time, end_time = self.charging_period_limit(row)

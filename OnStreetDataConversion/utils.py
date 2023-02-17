@@ -225,6 +225,7 @@ def get_week_no(date, holidays):
 def pan_time(*args, **kwargs):
     # 該日未收費
     if kwargs['time_start'] == '-1' or kwargs['time_end'] == '-1':
+        logging.info(f"grid {kwargs['grid']} bill at {kwargs['end']} to {kwargs['end']} out of charging period")
         return None, None
     # 開單的開始結束時間應在同一天內
     benchmark_start = datetime(
