@@ -99,7 +99,7 @@ class DataTransformerDaily:
 
     def debug_check_cnt(self, road, week_no, name_type, bill_date):
         if not self.mean_cnt[road][week_no][name_type][1]:
-            logging.warning('>> 非收費時段收費')
+            logging.warning('>> Out of charging period!!')
             logging.warning(f'Road : {road}')
             logging.warning(f'Date : {bill_date}')
             logging.warning(f'Name_type : {name_type}')
