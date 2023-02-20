@@ -46,7 +46,7 @@ def insert_holidays(data):
     logging.info('|----- Insert holidays Data -----|')
     table_name = 'holidays'
     columns = 'date_col week_no is_weekend is_national is_other is_makeup is_workday is_billing'.split(' ')
-    primary_key = 'date_col'
+    primary_key = 'date_col'.split(' ')
 
     __insert_data(
         data,
