@@ -31,24 +31,28 @@ class ConnSQL:
 @ConnSQL
 def __insert_data(*args, conn, **kwargs):
     with conn.cursor() as cur:
-        query = sql.SQL("INSERT INTO {table} ({col}) VALUES ({value});").format(
-            table=sql.SQL(kwargs['TableName']),
-            col=sql.SQL(',').join([sql.SQL(col_name) for col_name in kwargs['Columns']]),
-            value=sql.SQL(',').join([sql.SQL('%s') for _ in range(len(kwargs['Columns']))])
+        query = sql.SQL("INSERT INTO {table} ({col}) VALUES ({value}) ON CONFLICT ({pkey}) DO NOTHING;").format(
+            table=sql.SQL(kwargs['table']),
+            col=sql.SQL(',').join([sql.SQL(col_name) for col_name in kwargs['cols']]),
+            value=sql.SQL(',').join([sql.SQL('%s') for _ in range(len(kwargs['cols']))]),
+            pkey=sql.SQL(',').join([sql.SQL(col_name) for col_name in kwargs['pkey']])
         )
+        logging.debug(query.as_string(conn))
         for row in args[0]:
+            logging.debug(row)
             cur.execute(query, tuple(row))
 
 def insert_holidays(data):
     logging.info('|----- Insert holidays Data -----|')
-    kwargs = {}
-    kwargs['TableName'] = f'holidays'
-    kwargs['Columns'] = 'date_col week_no is_weekend is_national is_other is_makeup is_workday is_billing'.split(' ')
+    table_name = 'holidays'
+    columns = 'date_col week_no is_weekend is_national is_other is_makeup is_workday is_billing'.split(' ')
+    primary_key = 'date_col'
 
     __insert_data(
         data,
-        TableName=kwargs['TableName'],
-        Columns=kwargs['Columns']
+        table=table_name,
+        cols=columns,
+        pkey=primary_key
     )
 
 def read_csv():
